@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare quick tunnel log (local-only, machine-specific)
+tunnel.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dev server log (machine-specific)
+devserver.log
