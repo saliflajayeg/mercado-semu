@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function AppBar() {
   return (
     <header className="bg-brand-navy px-4 pt-3 pb-4 text-white">
@@ -25,6 +27,12 @@ export function AppBar() {
       <div className="mt-2 flex items-center gap-1 text-xs text-[#c3cdf0]">
         📍 Malabo, Guinea Ecuatorial ⌄
       </div>
+      <Link
+        href="/buscar"
+        className="mt-2.5 flex items-center gap-2 rounded-xl bg-white px-3 py-2.5 text-[13px] text-brand-muted"
+      >
+        🔎 Buscar en Mercado Semu...
+      </Link>
     </header>
   );
 }
