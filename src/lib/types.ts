@@ -6,19 +6,21 @@ export type PaymentStatus = "pending" | "confirmed" | "rejected";
 
 export interface Profile {
   id: string;
+  auth_user_id: string | null;
   full_name: string | null;
   phone: string | null;
   avatar_url: string | null;
   zone: string | null;
   city: string;
   is_verified: boolean;
+  is_admin: boolean;
   plan: Plan;
   plan_expires_at: string | null;
   created_at: string;
 }
 
 export interface Category {
-  id: string;
+  id: number;
   slug: string;
   name_es: string;
   icon: string;
@@ -31,12 +33,14 @@ export interface Listing {
   title: string;
   description: string;
   price_xaf: number;
-  category_id: string;
+  category_id: number | null;
   zone: string | null;
   city: string;
   status: ListingStatus;
   is_featured: boolean;
   featured_until: string | null;
+  emoji: string | null;
+  bg_color: string | null;
   views: number;
   created_at: string;
   updated_at: string;
