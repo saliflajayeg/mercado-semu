@@ -88,6 +88,17 @@ export async function getGridListings(categoryId?: number): Promise<ListingCard[
   return (data as ListingCard[] | null) ?? [];
 }
 
+export async function getMyListings(profileId: string): Promise<ListingCard[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("listings")
+    .select(CARD_SELECT)
+    .eq("seller_id", profileId)
+    .neq("status", "removed")
+    .order("created_at", { ascending: false });
+  return (data as ListingCard[] | null) ?? [];
+}
+
 export async function getListingById(id: string): Promise<ListingDetail | null> {
   const supabase = await createClient();
   const { data } = await supabase

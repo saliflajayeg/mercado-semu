@@ -42,7 +42,7 @@ export default async function PerfilPage() {
   const menuItems = [
     { icon: "⚡", label: "Planes de vendedor", href: "/planes", badge: PLAN_LABEL[profile.plan] },
     { icon: "➕", label: "Publicar un anuncio", href: "/vender" },
-    { icon: "📦", label: "Mis anuncios", href: null },
+    { icon: "📦", label: "Mis anuncios", href: "/mis-anuncios" },
     { icon: "❤️", label: "Favoritos", href: null },
     { icon: "📊", label: "Estadísticas de mis anuncios", href: null },
     { icon: "⚙️", label: "Ajustes", href: null },
