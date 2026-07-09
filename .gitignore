@@ -46,3 +46,5 @@ next-env.d.ts
 
 # local dev server log (machine-specific)
 devserver.log
+prodserver.log
+tunnel3010.log
