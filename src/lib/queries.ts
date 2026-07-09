@@ -1,6 +1,40 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Category, Listing, ListingImage, Profile } from "@/lib/types";
 
+/** The signed-in user's profile row, or null if not logged in. */
+export async function getSessionProfile(): Promise<Profile | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+  return (data as Profile | null) ?? null;
+}
+
+export async function getListingStats(
+  profileId: string,
+): Promise<{ active: number; sold: number }> {
+  const supabase = await createClient();
+  const [{ count: active }, { count: sold }] = await Promise.all([
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("seller_id", profileId)
+      .eq("status", "active"),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("seller_id", profileId)
+      .eq("status", "sold"),
+  ]);
+  return { active: active ?? 0, sold: sold ?? 0 };
+}
+
 export type ListingCard = Listing & {
   seller: Pick<Profile, "id" | "full_name" | "is_verified"> | null;
   category: Pick<Category, "slug" | "name_es" | "icon"> | null;
