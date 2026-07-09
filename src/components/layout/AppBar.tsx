@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function AppBar() {
@@ -5,9 +6,14 @@ export function AppBar() {
     <header className="bg-brand-navy px-4 pt-3 pb-4 text-white">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white text-lg">
-            🛍️
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Mercado Semu"
+            width={44}
+            height={44}
+            priority
+            className="h-11 w-11 object-contain"
+          />
           <div className="leading-none">
             <h1 className="text-[17px] font-extrabold tracking-wide">
               MERCADO <span className="text-brand-green">SEMU</span>
