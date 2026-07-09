@@ -12,11 +12,20 @@ echo  ════════════════════════�
 echo   Mercado Semu — Publicar en internet desde este PC
 echo  ═══════════════════════════════════════════════════════════
 echo.
-echo  [1/2] Iniciando el servidor local...
-start "Mercado Semu - Servidor (no cerrar)" cmd /c "npm run dev"
+echo  [1/3] Preparando la version optimizada (puede tardar 1-2 min)...
+call npm run build
+if errorlevel 1 (
+    echo.
+    echo  [ERROR] No se pudo preparar la version optimizada.
+    pause
+    exit /b 1
+)
+
+echo  [2/3] Iniciando el servidor local (version rapida)...
+start "Mercado Semu - Servidor (no cerrar)" cmd /c "npm start"
 timeout /t 6 /nobreak > nul
 
-echo  [2/2] Creando el tunel publico de Cloudflare...
+echo  [3/3] Creando el tunel publico de Cloudflare...
 if exist tunnel.log del tunnel.log
 start "Mercado Semu - Tunel publico (no cerrar)" "%CLOUDFLARED%" tunnel --url http://localhost:3000 --logfile tunnel.log
 
