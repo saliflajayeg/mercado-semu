@@ -27,7 +27,7 @@ timeout /t 6 /nobreak > nul
 
 echo  [3/3] Creando el tunel publico de Cloudflare...
 if exist tunnel.log del tunnel.log
-start "Mercado Semu - Tunel publico (no cerrar)" "%CLOUDFLARED%" tunnel --url http://localhost:3000 --logfile tunnel.log
+start "Mercado Semu - Tunel publico (no cerrar)" "%CLOUDFLARED%" tunnel --url http://localhost:3000 --protocol http2 --logfile tunnel.log
 
 echo         Esperando la direccion publica...
 set "URL="

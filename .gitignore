@@ -48,3 +48,7 @@ next-env.d.ts
 devserver.log
 prodserver.log
 tunnel3010.log
+
+# local build/run logs
+buildlog.txt
+prodserver.log
