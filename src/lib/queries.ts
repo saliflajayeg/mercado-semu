@@ -1,5 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Category, Listing, ListingImage, Profile } from "@/lib/types";
+import type {
+  Category,
+  Listing,
+  ListingImage,
+  ListingStatus,
+  Profile,
+} from "@/lib/types";
 
 /** The signed-in user's profile row, or null if not logged in. */
 export async function getSessionProfile(): Promise<Profile | null> {
@@ -139,6 +145,67 @@ export async function getMyListings(profileId: string): Promise<ListingCard[]> {
     .neq("status", "removed")
     .order("created_at", { ascending: false });
   return (data as ListingCard[] | null) ?? [];
+}
+
+type ConvParty = { id: string; full_name: string | null };
+type ConvListing = {
+  id: string;
+  title: string;
+  emoji: string | null;
+  bg_color: string | null;
+  status: ListingStatus;
+  images: { url: string; sort: number }[];
+};
+type ConvMessage = {
+  id: string;
+  body: string;
+  created_at: string;
+  sender_id: string;
+  read_at: string | null;
+};
+
+export type ConversationRow = {
+  id: string;
+  created_at: string;
+  buyer_id: string;
+  seller_id: string;
+  listing: ConvListing | null;
+  buyer: ConvParty | null;
+  seller: ConvParty | null;
+  messages: ConvMessage[];
+};
+
+const CONVERSATION_SELECT =
+  "id, created_at, buyer_id, seller_id, listing:listings!listing_id(id, title, emoji, bg_color, status, images:listing_images(url, sort)), buyer:profiles!buyer_id(id, full_name), seller:profiles!seller_id(id, full_name), messages(id, body, created_at, sender_id, read_at)";
+
+export async function getConversations(
+  profileId: string,
+): Promise<ConversationRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("conversations")
+    .select(CONVERSATION_SELECT)
+    .or(`buyer_id.eq.${profileId},seller_id.eq.${profileId}`);
+  const rows = (data ?? []) as unknown as ConversationRow[];
+  // Sort by most recent activity (last message, else conversation creation).
+  return rows.sort((a, b) => lastActivity(b) - lastActivity(a));
+}
+
+export async function getConversation(
+  id: string,
+): Promise<ConversationRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("conversations")
+    .select(CONVERSATION_SELECT)
+    .eq("id", id)
+    .maybeSingle();
+  return (data as unknown as ConversationRow | null) ?? null;
+}
+
+function lastActivity(c: ConversationRow): number {
+  const times = c.messages.map((m) => new Date(m.created_at).getTime());
+  return times.length ? Math.max(...times) : new Date(c.created_at).getTime();
 }
 
 export async function getListingById(id: string): Promise<ListingDetail | null> {

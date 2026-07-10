@@ -115,6 +115,7 @@ export default async function ListingDetailPage({
         listingId={listing.id}
         initialFavorited={favoriteIds.has(listing.id)}
         isLoggedIn={Boolean(profile)}
+        isOwner={Boolean(profile) && listing.seller_id === profile!.id}
       />
     </>
   );
