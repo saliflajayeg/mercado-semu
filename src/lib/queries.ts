@@ -4,6 +4,7 @@ import type {
   Listing,
   ListingImage,
   ListingStatus,
+  Plan,
   Profile,
 } from "@/lib/types";
 
@@ -92,6 +93,42 @@ export async function getGridListings(categoryId?: number): Promise<ListingCard[
   if (categoryId) query = query.eq("category_id", categoryId);
   const { data } = await query;
   return (data as ListingCard[] | null) ?? [];
+}
+
+export type PaymentRow = {
+  id: string;
+  type: "subscription" | "boost";
+  plan: Plan | null;
+  amount_xaf: number;
+  status: "pending" | "confirmed" | "rejected";
+  reference: string;
+  created_at: string;
+  ref_listing_id: string | null;
+  user: { id: string; full_name: string | null; phone: string | null } | null;
+  listing: { id: string; title: string } | null;
+};
+
+const PAYMENT_SELECT =
+  "id, type, plan, amount_xaf, status, reference, created_at, ref_listing_id, user:profiles!user_id(id, full_name, phone), listing:listings!ref_listing_id(id, title)";
+
+export async function getMyPayments(profileId: string): Promise<PaymentRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("payments")
+    .select(PAYMENT_SELECT)
+    .eq("user_id", profileId)
+    .order("created_at", { ascending: false });
+  return (data as unknown as PaymentRow[] | null) ?? [];
+}
+
+export async function getPendingPayments(): Promise<PaymentRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("payments")
+    .select(PAYMENT_SELECT)
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+  return (data as unknown as PaymentRow[] | null) ?? [];
 }
 
 /** Set of listing ids the given profile has favorited (for showing heart state). */

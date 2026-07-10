@@ -39,11 +39,20 @@ export default async function PerfilPage() {
   const initial = (profile.full_name ?? "?").charAt(0).toUpperCase();
   const memberSince = new Date(profile.created_at).getFullYear();
 
-  const menuItems = [
+  const menuItems: {
+    icon: string;
+    label: string;
+    href: string | null;
+    badge?: string;
+  }[] = [
     { icon: "⚡", label: "Planes de vendedor", href: "/planes", badge: PLAN_LABEL[profile.plan] },
     { icon: "➕", label: "Publicar un anuncio", href: "/vender" },
     { icon: "📦", label: "Mis anuncios", href: "/mis-anuncios" },
     { icon: "❤️", label: "Favoritos", href: "/favoritos" },
+    { icon: "🧾", label: "Mis pagos", href: "/mis-pagos" },
+    ...(profile.is_admin
+      ? [{ icon: "🛡️", label: "Panel de administrador", href: "/admin" }]
+      : []),
     { icon: "📊", label: "Estadísticas de mis anuncios", href: null },
     { icon: "⚙️", label: "Ajustes", href: null },
   ];

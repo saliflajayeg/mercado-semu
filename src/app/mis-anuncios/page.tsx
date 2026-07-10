@@ -80,7 +80,11 @@ export default async function MisAnunciosPage() {
                   <div className="mt-0.5 line-clamp-1 text-xs text-[#43506b]">
                     {listing.title}
                   </div>
-                  <MisAnunciosActions id={listing.id} status={listing.status} />
+                  <MisAnunciosActions
+                    id={listing.id}
+                    status={listing.status}
+                    isFeatured={listing.is_featured}
+                  />
                 </div>
               </div>
             );

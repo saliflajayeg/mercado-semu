@@ -8,9 +8,11 @@ import type { ListingStatus } from "@/lib/types";
 export function MisAnunciosActions({
   id,
   status,
+  isFeatured,
 }: {
   id: string;
   status: ListingStatus;
+  isFeatured: boolean;
 }) {
   const [pending, start] = useTransition();
 
@@ -19,6 +21,11 @@ export function MisAnunciosActions({
 
   return (
     <div className="mt-2 flex flex-wrap gap-2">
+      {status === "active" && !isFeatured && (
+        <Link href={`/destacar/${id}`} className={`${btn} border-brand-green bg-green-50 text-brand-green-dark`}>
+          ⭐ Destacar
+        </Link>
+      )}
       <Link href={`/vender/${id}`} className={`${btn} text-brand-navy`}>
         Editar
       </Link>
