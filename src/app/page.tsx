@@ -6,6 +6,8 @@ import {
   getCategories,
   getFeaturedListings,
   getGridListings,
+  getSessionProfile,
+  getFavoriteIds,
 } from "@/lib/queries";
 
 export default async function HomePage({
@@ -17,9 +19,11 @@ export default async function HomePage({
   const categories = await getCategories();
   const activeCategory = cat ? categories.find((c) => c.slug === cat) : undefined;
 
-  const [featured, grid] = await Promise.all([
+  const profile = await getSessionProfile();
+  const [featured, grid, favoriteIds] = await Promise.all([
     getFeaturedListings(),
     getGridListings(activeCategory?.id),
+    profile ? getFavoriteIds(profile.id) : Promise.resolve(new Set<string>()),
   ]);
 
   return (
@@ -50,7 +54,12 @@ export default async function HomePage({
         {grid.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 px-3.5">
             {grid.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                favorited={favoriteIds.has(listing.id)}
+                isLoggedIn={Boolean(profile)}
+              />
             ))}
           </div>
         ) : (

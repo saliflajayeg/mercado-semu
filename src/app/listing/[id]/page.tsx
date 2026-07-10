@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getListingById } from "@/lib/queries";
+import {
+  getListingById,
+  getSessionProfile,
+  getFavoriteIds,
+} from "@/lib/queries";
 import { formatXAF, formatRelativeTime, whatsappLink } from "@/lib/format";
 import { Thumbnail } from "@/components/listings/Thumbnail";
 import { DetailActionBar } from "@/components/listings/DetailActionBar";
@@ -13,6 +17,11 @@ export default async function ListingDetailPage({
   const { id } = await params;
   const listing = await getListingById(id);
   if (!listing || listing.status === "removed") notFound();
+
+  const profile = await getSessionProfile();
+  const favoriteIds = profile
+    ? await getFavoriteIds(profile.id)
+    : new Set<string>();
 
   const image = listing.images?.[0]?.url ?? null;
   const seller = listing.seller;
@@ -101,7 +110,12 @@ export default async function ListingDetailPage({
         </p>
       </div>
 
-      <DetailActionBar whatsappUrl={whatsappLink(phone, listing.title)} />
+      <DetailActionBar
+        whatsappUrl={whatsappLink(phone, listing.title)}
+        listingId={listing.id}
+        initialFavorited={favoriteIds.has(listing.id)}
+        isLoggedIn={Boolean(profile)}
+      />
     </>
   );
 }

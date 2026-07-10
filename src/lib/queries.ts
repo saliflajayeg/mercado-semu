@@ -88,6 +88,48 @@ export async function getGridListings(categoryId?: number): Promise<ListingCard[
   return (data as ListingCard[] | null) ?? [];
 }
 
+/** Set of listing ids the given profile has favorited (for showing heart state). */
+export async function getFavoriteIds(profileId: string): Promise<Set<string>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("favorites")
+    .select("listing_id")
+    .eq("user_id", profileId);
+  return new Set((data ?? []).map((r) => r.listing_id as string));
+}
+
+export async function getFavoriteListings(
+  profileId: string,
+): Promise<ListingCard[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("favorites")
+    .select(`listing:listings!listing_id(${CARD_SELECT})`)
+    .eq("user_id", profileId)
+    .order("created_at", { ascending: false });
+  const rows = (data ?? []) as unknown as { listing: ListingCard | null }[];
+  return rows
+    .map((row) => row.listing)
+    .filter((l): l is ListingCard => l !== null)
+    .filter((l) => l.status === "active");
+}
+
+export async function searchListings(term: string): Promise<ListingCard[]> {
+  const q = term.trim();
+  if (!q) return [];
+  const supabase = await createClient();
+  const escaped = q.replace(/[%_,]/g, " ");
+  const { data } = await supabase
+    .from("listings")
+    .select(CARD_SELECT)
+    .eq("status", "active")
+    .or(`title.ilike.%${escaped}%,description.ilike.%${escaped}%`)
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(50);
+  return (data as ListingCard[] | null) ?? [];
+}
+
 export async function getMyListings(profileId: string): Promise<ListingCard[]> {
   const supabase = await createClient();
   const { data } = await supabase
