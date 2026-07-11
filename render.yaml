@@ -1,0 +1,23 @@
+# Render Blueprint for Mercado Semu.
+# In Render: New → Blueprint → connect the mercado-semu repo → it reads this file.
+# You'll be asked to fill in the env var values (they are not stored in git).
+services:
+  - type: web
+    name: mercado-semu
+    runtime: node
+    plan: starter # always-on (~$7/mo). Free plan sleeps, so we avoid it.
+    region: frankfurt # closest to Equatorial Guinea
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true # redeploys on every git push to the main branch
+    envVars:
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: NEXT_PUBLIC_WHATSAPP_NUMBER
+        sync: false
+      - key: NEXT_PUBLIC_MUNIDINERO_NUMBER
+        sync: false
+      - key: NEXT_PUBLIC_MUNIDINERO_NAME
+        sync: false
