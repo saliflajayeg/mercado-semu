@@ -28,8 +28,8 @@ export default async function SubscribePage({
 
       <div className="p-4">
         <p className="mb-3 text-sm text-[#39425c]">
-          Estás a un paso de activar <b>{info.name}</b>. Completa el pago con
-          MuniDinero y envía la referencia.
+          Estás a un paso de activar <b>{info.name}</b>. Paga con MuniDinero y
+          sube la foto del recibo.
         </p>
         <PaymentInstructions amountXaf={info.priceXaf} />
         <PaymentReferenceForm kind="subscription" plan={info.id} />

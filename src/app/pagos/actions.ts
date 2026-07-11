@@ -10,14 +10,15 @@ export type PaymentResult = { error: string } | { ok: true };
 export async function submitSubscriptionPayment(
   plan: PlanId,
   reference: string,
+  receiptUrl: string,
 ): Promise<PaymentResult> {
   const profile = await getSessionProfile();
   if (!profile) return { error: "Inicia sesión para continuar." };
 
   const info = getPlan(plan);
   if (!info || info.priceXaf <= 0) return { error: "Plan no válido." };
-  if (!reference.trim())
-    return { error: "Escribe la referencia del pago de MuniDinero." };
+  if (!receiptUrl.trim())
+    return { error: "Sube una foto del recibo de MuniDinero." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("payments").insert({
@@ -27,6 +28,7 @@ export async function submitSubscriptionPayment(
     amount_xaf: info.priceXaf,
     method: "mobile_money",
     reference: reference.trim(),
+    receipt_url: receiptUrl.trim(),
   });
   if (error) return { error: "No se pudo registrar el pago. Inténtalo de nuevo." };
 
@@ -37,11 +39,12 @@ export async function submitSubscriptionPayment(
 export async function submitBoostPayment(
   listingId: string,
   reference: string,
+  receiptUrl: string,
 ): Promise<PaymentResult> {
   const profile = await getSessionProfile();
   if (!profile) return { error: "Inicia sesión para continuar." };
-  if (!reference.trim())
-    return { error: "Escribe la referencia del pago de MuniDinero." };
+  if (!receiptUrl.trim())
+    return { error: "Sube una foto del recibo de MuniDinero." };
 
   const supabase = await createClient();
   // Only the owner can boost their own listing.
@@ -60,6 +63,7 @@ export async function submitBoostPayment(
     amount_xaf: BOOST_PRICE_XAF,
     method: "mobile_money",
     reference: reference.trim(),
+    receipt_url: receiptUrl.trim(),
   });
   if (error) return { error: "No se pudo registrar el pago. Inténtalo de nuevo." };
 

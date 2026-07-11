@@ -32,7 +32,7 @@ export function PaymentInstructions({ amountXaf }: { amountXaf: number }) {
             </div>
           </li>
           <li>
-            3. Copia la <b>referencia</b> de la transacción y pégala abajo.
+            3. Haz una <b>captura del recibo</b> del envío y súbela abajo.
           </li>
         </ol>
       </div>

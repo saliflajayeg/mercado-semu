@@ -67,13 +67,38 @@ export default async function AdminPage() {
                     <b>Vendedor:</b> {p.user?.full_name ?? "—"}
                     {p.user?.phone ? ` · ${p.user.phone}` : ""}
                   </div>
-                  <div>
-                    <b>Referencia MuniDinero:</b> {p.reference}
-                  </div>
+                  {p.reference && (
+                    <div>
+                      <b>Referencia:</b> {p.reference}
+                    </div>
+                  )}
                   <div className="text-brand-muted">
                     {formatRelativeTime(p.created_at)}
                   </div>
                 </div>
+
+                {p.receipt_url ? (
+                  <a
+                    href={p.receipt_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 block overflow-hidden rounded-xl border border-brand-line"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.receipt_url}
+                      alt="Recibo de MuniDinero"
+                      className="max-h-56 w-full object-contain bg-brand-bg"
+                    />
+                    <span className="block bg-white py-1.5 text-center text-[11px] font-bold text-brand-navy">
+                      🧾 Ver recibo completo
+                    </span>
+                  </a>
+                ) : (
+                  <div className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-700">
+                    Sin recibo adjunto
+                  </div>
+                )}
 
                 <PaymentActions paymentId={p.id} />
               </div>

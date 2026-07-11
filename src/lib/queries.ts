@@ -102,6 +102,7 @@ export type PaymentRow = {
   amount_xaf: number;
   status: "pending" | "confirmed" | "rejected";
   reference: string;
+  receipt_url: string | null;
   created_at: string;
   ref_listing_id: string | null;
   user: { id: string; full_name: string | null; phone: string | null } | null;
@@ -109,7 +110,7 @@ export type PaymentRow = {
 };
 
 const PAYMENT_SELECT =
-  "id, type, plan, amount_xaf, status, reference, created_at, ref_listing_id, user:profiles!user_id(id, full_name, phone), listing:listings!ref_listing_id(id, title)";
+  "id, type, plan, amount_xaf, status, reference, receipt_url, created_at, ref_listing_id, user:profiles!user_id(id, full_name, phone), listing:listings!ref_listing_id(id, title)";
 
 export async function getMyPayments(profileId: string): Promise<PaymentRow[]> {
   const supabase = await createClient();

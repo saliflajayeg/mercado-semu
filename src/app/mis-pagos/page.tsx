@@ -79,8 +79,20 @@ export default async function MisPagosPage({
                       {s.label}
                     </span>
                   </div>
-                  <div className="mt-1 text-[15px] font-black text-brand-navy">
-                    {formatXAF(p.amount_xaf)}
+                  <div className="mt-1 flex items-center justify-between">
+                    <span className="text-[15px] font-black text-brand-navy">
+                      {formatXAF(p.amount_xaf)}
+                    </span>
+                    {p.receipt_url && (
+                      <a
+                        href={p.receipt_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[12px] font-bold text-brand-green-dark"
+                      >
+                        🧾 Ver recibo
+                      </a>
+                    )}
                   </div>
                 </div>
               );
